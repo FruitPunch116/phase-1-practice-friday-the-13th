@@ -1,63 +1,67 @@
 const URL = "http://localhost:3000/movies"
 
 fetch(URL)
-.then(resp => resp.json())
+.then(res => res.json())
 .then(movies => {
     movies.forEach(movie => renderMovie(movie))
-    displayDetails(movies[0])//Out of the scope for the loop, start code from the first object of the array.
+    displayMovie(movies[0])
 })
-.catch(e => alert(e.message))
-let selectedMovie //Does not iterate with the forEach loop.
-document.querySelector("#watched").addEventListener("click", () => toogleWatched(selectedMovie))//Select the desired movie value.
-const bloodForm = document.querySelector("#blood-form")//Target to add the event listener.
-bloodForm.addEventListener("submit", bloodCount)//Target to display the event listener.
+.catch(e => alert (e.message))
 
-function renderMovie(movie){
+let selectedMovie
+
+const watched = document.querySelector("#watched")
+.addEventListener("click", () => toggleWatched (selectedMovie))
+
+const bloodForm = document.querySelector("#blood-form")
+bloodForm.addEventListener("submit", (event)=>bloodCount(event))
+
+function renderMovie (movie) {
     const movieList = document.querySelector("#movie-list")
     const movieImage = document.createElement("img")
     movieImage.src = movie.image
-    movieImage.addEventListener("click", () => displayDetails(movie))
-    movieList.append(movieImage)//Adds the images to the `nav` movie list.
-    // console.log(movieImage)
+    movieList.append(movieImage)
+    movieImage.addEventListener("click", () => displayMovie(movie))
 }
 
-function displayDetails (movie){
-    const movieImage = document.querySelector("#detail-image")
+function displayMovie(movie) {
     const movieTitle = document.querySelector("#title")
     const movieRelease = document.querySelector("#year-released")
-    const movieDescripton = document.querySelector("#description")
-    const watched =document.querySelector("#watched")
+    const movieDescription = document.querySelector("#description")
+    const movieImage = document.querySelector("#detail-image")
+    const movieWatched = document.querySelector("#watched")
     const bloodAmount = document.querySelector("#amount")
-
-    movieImage.src = movie.image
     movieTitle.textContent = movie.title
     movieRelease.textContent = movie.release_year
-    movieDescripton.textContent = movie.description
-    watched.textContent = movie.watched ? "watched" : "unwatched"//if "watched" equalTo true return watched.
+    movieDescription.textContent = movie.description
+    movieImage.src = movie.image
+    movieWatched.textContent = movie.watched? "watched" : "unwatched"
     bloodAmount.textContent = movie.blood_amount
-    selectedMovie = movie//Displays the details of each movie.
+    selectedMovie = movie
 }
 
-function toogleWatched (movie) {
-    movie.watched = !movie.watched//Movie value qual to the oposite.
+function toggleWatched (movie) {
+    movie.watched = !movie.watched
     const watched = document.querySelector("#watched")
-    if (movie.watched===false){
-        watched.textContent = "unwatched"
-    }
-    else {
+    if (movie.watched === false) {
+        watched.textContent = 'unwatched'
+    } else {
         watched.textContent = "watched"
     }
-
 }
 
 function bloodCount (event) {
     event.preventDefault()
-    let inputBlood = document.querySelector("input#blood-amount").value
-    inputBlood = parseInt(inputBlood)//Converts input into a number.
-    let currentBlood = document.querySelector("#amount").textContent
-    currentBlood = parseInt(currentBlood)//Target output to be converted into number.
-    inputBlood = inputBlood + currentBlood//Increment number desired with the form number input.
-    selectedMovie.blood_amount = inputBlood//Rates the movie selected with the provided input.
-    document.querySelector("#amount").textContent = selectedMovie.blood_amount
-    document.querySelector("input#blood-amount").value = ""//Resets the form input value.
+    let bloodInput = document.querySelector("#blood-amount").value
+    bloodInput = parseInt(bloodInput)
+    // console.log(bloodInput)
+    let bloodOutput = document.querySelector("#amount")
+    bloodOutput = parseInt(bloodOutput.textContent)
+    bloodInput = parseInt(bloodInput) + parseInt(bloodOutput)
+    // console.log(bloodOutput)
+    
+    selectedMovie.blood_amount = bloodInput
+    document.querySelector("#amount").textContent= selectedMovie.blood_amount
+    document.querySelector("#blood-amount").value = ""
+
 }
